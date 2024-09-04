@@ -1,0 +1,10 @@
+[docker_managers]
+  docker-p01
+  docker-p04
+[docker_workers]
+  docker-p01
+  docker-p02
+  docker-p03
+[docker_swarm:children]
+  docker_managers
+  docker_workers

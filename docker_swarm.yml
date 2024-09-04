@@ -1,0 +1,38 @@
+---
+- name: Install Docker and set up Docker Swarm cluster
+  hosts: docker_swarm
+  become: yes
+
+  roles:
+    - geerlingguy.docker
+
+  tasks:
+    - name: Ensure Python3 and pip3 are installed
+      ansible.builtin.package:
+        name: 
+          - python3
+          - python3-pip
+          - python3-docker
+        state: present
+
+    - name: Initialize Docker Swarm on manager node
+      community.docker.docker_swarm:
+        state: present
+        advertise_addr: "{{ ansible_host }}"
+      when: "'docker_managers' in group_names"
+
+    - name: Get worker join token
+      ansible.builtin.command: docker swarm join-token -q worker
+      register: worker_join_token
+      when: "'docker_managers' in group_names"
+      run_once: yes
+      changed_when: false
+
+    - name: Join worker nodes to the Swarm
+      community.docker.docker_swarm:
+        state: join
+        advertise_addr: "{{ ansible_host }}"
+        join_token: "{{ hostvars[groups['docker_managers'][0]].worker_join_token.stdout }}"
+        remote_addrs: "{{ hostvars[groups['docker_managers'][0]].ansible_host }}:2377"
+      when: "'docker_workers' in group_names"
+
