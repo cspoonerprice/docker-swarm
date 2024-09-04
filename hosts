@@ -1,10 +1,10 @@
 [docker_managers]
-  docker-p01
-  docker-p04
+  docker-p01 ansible_host=192.168.1.x
+  docker-p04 ansible_host=192.168.1.y
 [docker_workers]
-  docker-p01
-  docker-p02
-  docker-p03
+  docker-p01 
+  docker-p02 ansible_host=192.168.1.z
+  docker-p03 ansible_host=192.168.1.a
 [docker_swarm:children]
   docker_managers
   docker_workers

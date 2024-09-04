@@ -16,11 +16,9 @@ The inventory file `hosts` is used to define the nodes that will participate in 
 
 ```ini
 [docker_managers]
-  docker-p01
-  docker-p03
+  docker-p01 ansible_host=192.168.1.x
 [docker_workers]
-  docker-p01
-  docker-p02
+  docker-p02 ansible_host=192.168.1.y
 [docker_swarm:children]
   docker_managers
   docker_workers
