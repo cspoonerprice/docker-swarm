@@ -24,3 +24,12 @@ The inventory file `hosts` is used to define the nodes that will participate in 
 [docker_swarm:children]
   docker_managers
   docker_workers
+
+
+Before running the playbook, you need to install the required Ansible roles and collections specified in the `requirements.yml` file.
+
+### To install the dependencies:
+
+```bash
+ansible-galaxy install -r requirements.yml
+
