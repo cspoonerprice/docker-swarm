@@ -21,12 +21,27 @@
         advertise_addr: "{{ ansible_host }}"
       when: "'docker_managers' in group_names"
 
+    - name: Get manager join token
+      ansible.builtin.command: docker swarm join-token -q manager
+      register: manager_join_token
+      when: "'docker_managers' in group_names"
+      run_once: yes
+      changed_when: false
+
     - name: Get worker join token
       ansible.builtin.command: docker swarm join-token -q worker
       register: worker_join_token
       when: "'docker_managers' in group_names"
       run_once: yes
       changed_when: false
+
+    - name: Join manager nodes to the Swarm
+      community.docker.docker_swarm:
+        state: join
+        advertise_addr: "{{ ansible_host }}"
+        join_token: "{{ hostvars[groups['docker_managers'][0]].manager_join_token.stdout }}"
+        remote_addrs: "{{ hostvars[groups['docker_managers'][0]].ansible_host }}:2377"
+      when: "'docker_managers' in group_names"
 
     - name: Join worker nodes to the Swarm
       community.docker.docker_swarm:
